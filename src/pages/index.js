@@ -5,68 +5,114 @@ import Layout from "../components/layout"
 import Image from "../components/image"
 import SEO from "../components/seo"
 
-
 class IndexPage extends Component {
   render() {
-
-    const { data } = this.props;
+    const { data } = this.props
     const learnings = data.allContentfulLearning.edges
-    console.log(this.props)
+    const categories = data.allContentfulCategory.edges
+    // console.log(this.props)
     return (
       <Layout>
         <SEO title="Home" />
 
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {learnings.map(({ node }) => {
-            console.log("IndexPage -> render -> node", node)
-
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            margin: "20px",
+          }}
+        >
+          {categories.map(({ node }) => {
             return (
-              <div style={{ width: '100%', maxWidth: '300px', boxShadow: '0px 2px 5px rgba(0,0,0,0.2)', textAlign: 'center', padding: '15px' }}>
+              <div
+                style={{
+                  width: "100%",
+                  maxWidth: "400px",
+                  boxShadow: "0px 2px 5px rgba(0,0,0,0.2)",
+                  textAlign: "center",
+                  padding: "15px",
+                  margin: "20px",
+                }}
+              >
                 <div>
-                  <img src={`https:${node.category.icon.file.url}`} height="30" width="auto" />
-                  <p>{node.category.title}</p>
+                  <img
+                    src={`https:${node.icon.file.url}`}
+                    height="30"
+                    width="auto"
+                  />
+                  <h2>{node.title}</h2>
                 </div>
-                <Link to={`/${node.slug}`}><h4>{node.title}</h4></Link>
-                <p>Learned from {node.type}</p>
+                <div>
+                  {node && node.learning ? (
+                    node.learning.map(item => {
+                      const { slug, title } = item
+                      return (
+                        <div>
+                          <Link to={`/${slug}`}>
+                            <h4>{title}</h4>
+                          </Link>
+                        </div>
+                      )
+                    })
+                  ) : (
+                    <p>Nothing yet...</p>
+                  )}
+                </div>
               </div>
             )
           })}
         </div>
-
-
-        {/* <Link to="/page-2/">Go to page 2</Link> <br />
-        <Link to="/using-typescript/">Go to "Using TypeScript"</Link> */}
-      </Layout >
+      </Layout>
     )
   }
 }
 
-export default IndexPage;
+export default IndexPage
 
 export const pageQuery = graphql`
-query {
-  allContentfulLearning {
-    edges {
-      node {
-        title
-        slug
-        childContentfulLearningNotesRichTextNode {
-          childContentfulRichText {
-            html
-          }
-        }
-        category {
+  query {
+    allContentfulCategory {
+      edges {
+        node {
           title
+          learning {
+            title
+            link
+            slug
+            type
+          }
           icon {
             file {
               url
             }
           }
-          createdAt
         }
-        type
-        updatedAt
+      }
+    }
+    allContentfulLearning {
+      edges {
+        node {
+          title
+          slug
+          childContentfulLearningNotesRichTextNode {
+            childContentfulRichText {
+              html
+            }
+          }
+          category {
+            title
+            icon {
+              file {
+                url
+              }
+            }
+            createdAt
+          }
+          type
+          updatedAt
+        }
       }
     }
   }
-}`
+`
