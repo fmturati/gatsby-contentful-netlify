@@ -19,7 +19,6 @@ class LearningPost extends Component {
                 {/* <Img fluid={category.fluid} /> */}
                 <div
                     dangerouslySetInnerHTML={{
-                        // __html: notes.childContentfulRichText.html,
                         __html: content.childMarkdownRemark.html,
                     }}
                 ></div>

@@ -9,7 +9,8 @@ const TopHeader = styled.div`
     rgba(63, 94, 251, 1) 0%,
     rgba(252, 70, 107, 1) 100%
   );
-
+  z-index: 10;
+  position: relative;
   margin-bottom: 1.45rem;
 `;
 
@@ -18,7 +19,7 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 960px;
+  max-width: 1020px;
   padding: 1.45rem 1.0875rem;
 `;
 
@@ -71,7 +72,7 @@ class Header extends Component {
   constructor() {
     super();
     this.state = {
-      siteTitle: 'My Learnings',
+      siteTitle: 'I Just Learned!',
       isSearch: false,
       querySearch: '',
     };
