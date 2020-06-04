@@ -1,5 +1,4 @@
 import { Link, StaticQuery, graphql } from 'gatsby';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import styled from 'styled-components';
 
@@ -78,19 +77,13 @@ class Header extends Component {
     };
 
     this.handleInputSearch = this.handleInputSearch.bind(this);
-    this.handleSearch = this.handleSearch.bind(this);
   }
 
   handleInputSearch = (e) => {
     this.setState({ querySearch: e.target.value });
   };
 
-  handleSearch = (e) => {
-    e.preventDefault();
-    const query = this.state.querySearch;
 
-    console.log(query);
-  };
 
   render() {
     return (
@@ -102,11 +95,6 @@ class Header extends Component {
                 node {
                   title
                   slug
-                  childContentfulLearningNotesRichTextNode {
-                    childContentfulRichText {
-                      html
-                    }
-                  }
                   category {
                     title
                     icon {
@@ -142,14 +130,12 @@ class Header extends Component {
                 </h1>
 
                 <SearchForm>
-                  {/* <form onSubmit={(e) => this.handleSearch(e)} style={{ marginBottom: '0px' }}> */}
                   <InputSearch
                     type="text"
                     placeholder="Search for..."
                     onChange={(e) => this.handleInputSearch(e)}
                   />
-                  {/* <ButtonSearch type="submit">Search</ButtonSearch> */}
-                  {/* </form> */}
+
                   {this.state.querySearch && (
                     <ListResults>
                       {this.state.querySearch &&
@@ -193,12 +179,6 @@ class Header extends Component {
   }
 }
 
-// Header.propTypes = {
-//   siteTitle: PropTypes.string,
-// }
 
-// Header.defaultProps = {
-//   siteTitle: ``,
-// }
 
 export default Header;

@@ -1,20 +1,59 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import styled from "styled-components"
 
 import { graphql, Link } from 'gatsby';
-import Img from 'gatsby-image';
-import Header from '../components/header';
+
 import Layout from '../components/layout';
+
+const MetaSection = styled.section`
+border-bottom: 1px solid #e0e0e0;
+    color: grey;
+    text-align: right;
+    font-size: 14px;
+    margin-bottom: 20px;
+    
+    p {
+        margin-bottom: 10px;
+    }
+    `
+
+const LearnRelated = styled.ul`
+    margin-top: 80px;
+    
+    li {
+        a {
+            text-decoration: none;
+            font-size: 14px;
+            color: #808080;
+            padding: 5px 10px;
+            border-bottom: #f7f7f7 1px solid;
+        
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+    }`
 
 class LearningPost extends Component {
     render() {
-        // console.log(this.props)
-
         const data = this.props.data;
         console.log('LearningPost -> render -> data', data);
-        const { notes, title, type, category, content } = data.contentfulLearning;
+        const {
+            title,
+            type,
+            category,
+            content,
+            updatedAt,
+        } = data.contentfulLearning;
         const { previous, next } = this.props.pageContext;
+        const date = new Date(updatedAt).toLocaleString().toString();
+        console.log('LearningPost -> render -> date', date);
         return (
             <Layout siteTitle={data.site.siteMetadata.title}>
+                <MetaSection>
+                    <p>Published on {date} | Category: {category.title}</p>
+                </MetaSection>
                 <h2>{title}</h2>
                 {/* <Img fluid={category.fluid} /> */}
                 <div
@@ -23,7 +62,8 @@ class LearningPost extends Component {
                     }}
                 ></div>
 
-                <ul>
+                <LearnRelated>
+                    <h3>More Learnings:</h3>
                     {previous && (
                         <li>
                             <Link to={previous.slug} rel="prev">
@@ -40,11 +80,15 @@ class LearningPost extends Component {
                             </Link>
                         </li>
                     )}
-                </ul>
+                </LearnRelated>
             </Layout>
         );
     }
 }
+
+LearningPost.propTypes = {
+    data: PropTypes.object,
+};
 
 export default LearningPost;
 
@@ -59,11 +103,6 @@ export const pageQuery = graphql`
     contentfulLearning(slug: { eq: $slug }) {
       title
       type
-      notes {
-        childContentfulRichText {
-          html
-        }
-      }
       content {
         childMarkdownRemark {
           html

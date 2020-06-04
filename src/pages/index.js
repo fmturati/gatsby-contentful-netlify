@@ -7,18 +7,12 @@ import Layout from '../components/layout';
 import SEO from '../components/seo';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faThLarge,
-  faAngleRight,
-  faExpand,
-  faExpandAlt,
-  faCompressAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 
 const GridCards = styled.div`
   display: grid;
   grid-template-columns: repeat(${(props) => props.gridCols}, 1fr);
-  grid-gap: 30px;
+  grid-gap: 50px 30px;
   justify-content: space-between;
   flex-wrap: wrap;
 `;
@@ -34,7 +28,7 @@ const LearningCard = styled.div`
   z-index: ${(props) =>
     props.maxId == props.id && props.isMaximized ? '10' : '1'};
   margin: ${(props) =>
-    props.maxId == props.id && props.isMaximized ? 'auto' : '20px 0'};
+    props.maxId == props.id && props.isMaximized ? 'auto' : '0'};
   height: ${(props) =>
     props.maxId == props.id && props.isMaximized ? '70%' : 'inherit'};
   left: ${(props) =>
@@ -44,17 +38,7 @@ const LearningCard = styled.div`
   background: white;
   min-height: 360px;
 
-  a {
-    text-decoration: none;
-    font-size: 14px;
-    color: #808080;
-    padding: 5px 10px;
-    border-bottom: #f7f7f7 1px solid;
 
-    &:hover {
-      text-decoration: underline;
-    }
-  }
   p {
     font-size: 14px;
     color: #808080;
@@ -86,31 +70,34 @@ const ListLearnings = styled.div`
   display: flex;
   flex-direction: column;
   text-align: left;
+`;
 
+const ListItem = styled.div`
   svg {
     margin-right: 10px;
   }
 
   a {
+    background: ${(props) => props.isOdd ? '#f9f9f9' : '#ffffff'};
     transition: all 0.2s ease;
+    width: 100%;
+    display: flex;
+    position: relative;
+    align-items: center;
+    text-decoration: none;
+    font-size: 14px;
+    color: #808080;
+    padding: 5px 10px;
+ 
+    
+
     &:hover {
-      transform: scale(1.02);
+      text-decoration: underline;
+
+      transform: scale(1.01);
       transition: all 0.2s ease;
     }
   }
-`;
-
-const IconExpand = styled.div`
-  position: absolute;
-  right: 9px;
-  top: 15px;
-  opacity: 0.3;
-  z-index: 2;
-  cursor: pointer;
-  width: 22px;
-  height: 22px;
-  margin: 0;
-  padding: 0;
 `;
 
 const GridSelector = styled.div`
@@ -129,16 +116,16 @@ const GridSelector = styled.div`
   }
 `;
 
-const OverlayBackground = styled.div`
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    top: 0;
-    overflow: hidden;
-    z-index: 3;
-    left: 0;
-    background: #424242;
-}`;
+// const OverlayBackground = styled.div`
+//     width: 100%;
+//     height: 100%;
+//     position: fixed;
+//     top: 0;
+//     overflow: hidden;
+//     z-index: 3;
+//     left: 0;
+//     background: #424242;
+// }`;
 
 class IndexPage extends Component {
   constructor(props) {
@@ -153,7 +140,6 @@ class IndexPage extends Component {
     this.handleInputSearch = this.handleInputSearch.bind(this);
     this.handleMaximized = this.handleMaximized.bind(this);
     this.handleColumns = this.handleColumns.bind(this);
-
     // creating ref
     this.learnRef = [];
   }
@@ -174,22 +160,23 @@ class IndexPage extends Component {
     const { data } = this.props;
     const categories = data.allContentfulCategory.edges;
 
-    console.log(this.state.isMaximized);
-
     return (
       <Layout>
-        {this.state.isMaximized && (
+        {/* {this.state.isMaximized && (
           <OverlayBackground
             onClick={() => this.setState({ isMaximized: false })}
           />
-        )}
+        )} */}
         <GridSelector>
           <FontAwesomeIcon icon={faThLarge} size="lg" />
-          <select onChange={(e) => this.handleColumns(e)}>
+          <select
+            onChange={(e) => this.handleColumns(e)}
+            defaultValue={this.state.gridCols}
+          >
             <option value="1" name="1">
               1 Column
             </option>
-            <option value="2" name="2" defaultChecked>
+            <option value="2" name="2">
               2 Columns
             </option>
             <option value="3" name="3">
@@ -199,56 +186,51 @@ class IndexPage extends Component {
         </GridSelector>
 
         <GridCards gridCols={this.state.gridCols}>
-          {categories.map(({ node }, index) => {
-            // console.log("IndexPage -> render -> node", node)
-            return (
-              <LearningCard
-                gridCols={this.state.gridCols}
-                key={index}
-                ref={(learnRef) => (this.learnRef[index] = learnRef)}
-                id={index}
-                maxId={this.state.maxId}
-                isMaximized={this.state.isMaximized}
-              >
-                <IconExpand
-                  onClick={(item) => {
-                    // this.learnRef[index].scrollIntoView({
-                    //   behavior: 'smooth',
-                    //   block: 'center',
-                    // });
-                    this.setState({ isMaximized: !this.state.isMaximized });
-                    this.handleMaximized(index);
-                  }}
+          {categories
+            .sort(() => Math.random() - 0.5)
+            .map(({ node }, index) => {
+              return (
+                <LearningCard
+                  gridCols={this.state.gridCols}
+                  key={node.title}
+                  ref={(learnRef) => (this.learnRef[index] = learnRef)}
+                  id={index}
+                  maxId={this.state.maxId}
+                  isMaximized={this.state.isMaximized}
                 >
-                  {this.state.isMaximized ? (
-                    <FontAwesomeIcon icon={faCompressAlt} size="lg" />
-                  ) : (
-                      <FontAwesomeIcon icon={faExpandAlt} size="lg" />
-                    )}
-                </IconExpand>
-                <CardHeader>
-                  <img src={`https:${node.icon.file.url}`} alt={node.title} />
-                  <h3>{node.title}</h3>
-                </CardHeader>
-                <ListLearnings key={node.title}>
-                  {node && node.learning ? (
-                    node.learning.map((item) => {
-                      // console.log("IndexPage -> render -> item", item)
-                      const { slug, title } = item;
-                      return (
-                        <Link key={item} to={`/${slug}`}>
-                          <FontAwesomeIcon icon={faAngleRight} size="lg" />
-                          {title.slice(0, 50)}...
-                        </Link>
-                      );
-                    })
-                  ) : (
-                      <p>Nothing here yet...</p>
-                    )}
-                </ListLearnings>
-              </LearningCard>
-            );
-          })}
+                  <CardHeader>
+                    <img src={`https:${node.icon.file.url}`} alt={node.title} />
+                    <h3>{node.title}</h3>
+                  </CardHeader>
+                  <ListLearnings>
+                    {node && node.learning ? (
+                      node.learning
+                        .sort(
+                          (a, b) =>
+                            new Date(b.updatedAt) - new Date(a.updatedAt)
+                        )
+                        .map((item, i) => {
+                          const { slug, title } = item;
+                          const isOdd = i % 2 == 0;
+                          return (
+                            <ListItem key={item.title} isOdd={isOdd}>
+                              <Link to={`/${slug}`}>
+                                <FontAwesomeIcon
+                                  icon={faAngleRight}
+                                  size="lg"
+                                />
+                                {title.slice(0, 50)}...
+                              </Link>
+                            </ListItem>
+                          );
+                        })
+                    ) : (
+                        <p>Nothing here yet...</p>
+                      )}
+                  </ListLearnings>
+                </LearningCard>
+              );
+            })}
         </GridCards>
       </Layout>
     );
@@ -273,6 +255,7 @@ export const pageQuery = graphql`
             tags
             slug
             type
+            updatedAt
           }
           icon {
             file {
@@ -287,11 +270,6 @@ export const pageQuery = graphql`
         node {
           title
           slug
-          childContentfulLearningNotesRichTextNode {
-            childContentfulRichText {
-              html
-            }
-          }
           category {
             title
             icon {
