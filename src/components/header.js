@@ -1,6 +1,8 @@
 import { Link, StaticQuery, graphql } from 'gatsby';
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDown } from '@fortawesome/free-solid-svg-icons';
 
 const TopHeader = styled.div`
   background: linear-gradient(
@@ -20,10 +22,20 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   max-width: 1020px;
   padding: 1.45rem 1.0875rem;
+
+
+  h1 {
+    color: white;
+    text-decoration: none;
+    
+    a {
+      font-size: 35px;
+    }
+  }
 `;
 
 const ListResults = styled.div`
-max-width: 400px;
+max-width: 350px;
 width: 100%;
 display: flex;
 flex-direction: column;
@@ -49,7 +61,7 @@ const SearchForm = styled.div`
   padding: 0px;
   align-items: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
   display: flex;
   position: relative;
 `;
@@ -67,6 +79,71 @@ const InputSearch = styled.input`
   }
 `;
 
+const DropDownMenu = styled.ul`
+    margin: 0px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    width: 145px;
+    position: absolute;
+    background: white;
+    top: 30px;
+    right: 0;
+    box-shadow: rgba(0,0,0,0.12) 0px 2px 15px;
+
+    
+    `
+
+const DropDownMenuItem = styled.li`
+    background: ${(props) => props.isOdd ? '#f9f9f9' : '#ffffff'};
+    padding: 0;
+
+    a {
+      text-decoration: none;
+      font-size: 14px;
+      color: #808080 !important;     
+      transition: all 0.2s ease;
+      padding: 5px 10px !important;
+
+      &:hover {
+        text-decoration: underline;  
+        transform: scale(1.01);
+        transition: all 0.2s ease;
+      }
+    }    
+  `
+
+const TopMenu = styled.ul`
+    display: flex;
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    align-items: center;
+    position: relative;
+    
+    li {
+      margin: 0px;
+      padding: 0 20px;
+      color: #ffffff;
+      text-decoration: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      svg {
+        margin-left: 5px;
+      }
+
+      a {
+      color: #ffffff;
+      text-decoration: none;
+      padding: 0 20px;
+      }
+      
+    }
+    
+    `
+
 class Header extends Component {
   constructor() {
     super();
@@ -74,6 +151,7 @@ class Header extends Component {
       siteTitle: 'I Just Learned!',
       isSearch: false,
       querySearch: '',
+      dropDownMenu: false
     };
 
     this.handleInputSearch = this.handleInputSearch.bind(this);
@@ -97,6 +175,7 @@ class Header extends Component {
                   slug
                   category {
                     title
+                    slug
                     icon {
                       file {
                         url
@@ -109,10 +188,22 @@ class Header extends Component {
                 }
               }
             }
+            allContentfulCategory {
+              edges {
+                node {
+                  updatedAt
+                  title
+                  slug
+                }
+              }
+            }
           }
         `}
         render={(data) => {
           const learnings = data.allContentfulLearning.edges;
+          const categories = data.allContentfulCategory.edges;
+          console.log("Header -> render -> categories", categories)
+          console.log("Header -> render -> learnings", learnings)
 
           return (
             <TopHeader>
@@ -128,6 +219,34 @@ class Header extends Component {
                     {this.state.siteTitle}
                   </Link>
                 </h1>
+                <TopMenu>
+                  <li>
+                    <Link
+                      to="/"
+
+                    >
+                      Home
+                    </Link>
+                  </li>
+                  <li
+                    onClick={() => {
+                      console.log('clicked');
+                      this.setState({ dropDownMenu: !this.state.dropDownMenu });
+                    }}>
+                    Categories <FontAwesomeIcon icon={faAngleDown} />
+                    {this.state.dropDownMenu && <DropDownMenu>
+                      {categories && categories.map(({ node }, index) => {
+                        const isOdd = index % 2 === 0;
+                        return (
+                          <DropDownMenuItem isOdd={isOdd}>
+                            <Link to={node.slug}>{node.title}</Link>
+                          </DropDownMenuItem>
+                        )
+                      })}
+                    </DropDownMenu>
+                    }
+                  </li>
+                </TopMenu>
 
                 <SearchForm>
                   <InputSearch
