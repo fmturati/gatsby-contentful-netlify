@@ -6,7 +6,6 @@ import Layout from "../components/layout"
 
 class PageTemplate extends Component {
   render() {
-    // console.log(this.props)
     const {
       title,
       content,

@@ -42,7 +42,6 @@ const car = 0;
 class LearningPost extends Component {
   render() {
     const { data } = this.props;
-    console.log('LearningPost -> render -> data', data);
     const {
       title,
       type,
@@ -52,7 +51,6 @@ class LearningPost extends Component {
     } = data.contentfulLearning;
     const { previous, next } = this.props.pageContext;
     const date = new Date(updatedAt).toLocaleString().toString();
-    // console.log('LearningPost -> render -> date', date);
     return (
       <Layout siteTitle={data.site.siteMetadata.title}>
         <MetaSection>
@@ -61,7 +59,6 @@ class LearningPost extends Component {
           </p>
         </MetaSection>
         <h2>{title}</h2>
-        {/* <Img fluid={category.fluid} /> */}
         <div
           dangerouslySetInnerHTML={{
             __html: content.childMarkdownRemark.html,
@@ -73,7 +70,6 @@ class LearningPost extends Component {
           {previous && (
             <li>
               <Link to={previous.slug} rel="prev">
-                {' '}
                 {previous.title}
               </Link>
             </li>
@@ -81,7 +77,6 @@ class LearningPost extends Component {
           {next && (
             <li>
               <Link to={next.slug} rel="prev">
-                {' '}
                 {next.title}
               </Link>
             </li>
