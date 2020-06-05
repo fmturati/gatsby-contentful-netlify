@@ -1,18 +1,19 @@
-const path = require("path")
+const path = require('path');
 
 exports.createPages = ({ graphql, actions }) => {
-    const { createPage } = actions;
+  const { createPage } = actions;
 
-    const learningPost = path.resolve(`./src/templates/learning-post.js`)
-    const sitePages = path.resolve(`./src/templates/page-template.js`)
+  const learningPost = path.resolve(`./src/templates/learning-post.js`);
+  const sitePages = path.resolve(`./src/templates/page-template.js`);
+  const categoriesPage = path.resolve(`./src/templates/category-pages.js`);
 
-    return graphql(`
+  return graphql(`
     {
       allContentfulLearning {
         edges {
           node {
             title
-            slug            
+            slug
             category {
               title
               icon {
@@ -24,6 +25,15 @@ exports.createPages = ({ graphql, actions }) => {
             }
             type
             updatedAt
+          }
+        }
+      }
+      allContentfulCategory {
+        edges {
+          node {
+            updatedAt
+            title
+            slug
           }
         }
       }
@@ -53,49 +63,68 @@ exports.createPages = ({ graphql, actions }) => {
         }
       }
     }
-  `).then(result => {
-        if (result.errors) {
-            throw result.errors
+  `).then((result) => {
+    if (result.errors) {
+      throw result.errors;
+    }
+
+    // create the pages
+
+    const learnings = result.data.allContentfulLearning.edges;
+    const pages = result.data.allContentfulPages.edges;
+    const categories = result.data.allContentfulCategory.edges;
+    console.log("exports.createPages -> categories", categories)
+    // console.log("exports.createPages -> learnings", learnings)
+
+    learnings.forEach((learning, index) => {
+      const previous =
+        index === learnings.length - 1 ? null : learnings[index + 1].node;
+      const next = index === 0 ? null : learnings[index - 1].node;
+
+      createPage({
+        path: learning.node.slug,
+        component: learningPost,
+        context: {
+          slug: learning.node.slug,
+          previous,
+          next,
+        },
+      });
+    });
+
+    categories.forEach((category, index) => {
+      console.log("exports.createPages -> category", category)
+      const previous = index === categories.length - 1 ? null : categories[index + 1].node;
+      const next = index === 0 ? null : categories[index - 1].node;
+
+
+      createPage({
+        path: category.node.slug,
+        component: categoriesPage,
+        context: {
+          slug: category.node.slug,
+          previous,
+          next
         }
+      })
+    });
 
-        // create the pages
 
-        const learnings = result.data.allContentfulLearning.edges
-        // console.log("exports.createPages -> learnings", learnings)
 
-        learnings.forEach((learning, index) => {
-            const previous =
-                index === learnings.length - 1 ? null : learnings[index + 1].node
-            const next = index === 0 ? null : learnings[index - 1].node
+    pages.forEach((page, index) => {
+      const previous =
+        index === pages.length - 1 ? null : pages[index + 1].node;
+      const next = index === 0 ? null : pages[index - 1].node;
 
-            createPage({
-                path: learning.node.slug,
-                component: learningPost,
-                context: {
-                    slug: learning.node.slug,
-                    previous,
-                    next,
-                },
-            })
-        })
-
-        const pages = result.data.allContentfulPages.edges
-        // console.log("exports.createPages -> pages", pages)
-        // console.log("exports.createPages -> learnings", learnings)
-
-        pages.forEach((page, index) => {
-            const previous = index === pages.length - 1 ? null : pages[index + 1].node
-            const next = index === 0 ? null : pages[index - 1].node
-
-            createPage({
-                path: page.node.slug,
-                component: sitePages,
-                context: {
-                    slug: page.node.slug,
-                    previous,
-                    next,
-                },
-            })
-        })
-    })
-}
+      createPage({
+        path: page.node.slug,
+        component: sitePages,
+        context: {
+          slug: page.node.slug,
+          previous,
+          next,
+        },
+      });
+    });
+  });
+};

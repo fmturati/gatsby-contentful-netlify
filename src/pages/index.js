@@ -7,7 +7,7 @@ import Layout from '../components/layout';
 import SEO from '../components/seo';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faAngleRight, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 const GridCards = styled.div`
   display: grid;
@@ -48,17 +48,27 @@ const LearningCard = styled.div`
 
 const CardHeader = styled.div`
   padding: 10px;
-  background: #fbfbfb;
+  background: #8554c4;
   position: relative;
   display: flex;
   justify-content: center;
+
+  a {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    color: #ffffff;
+    text-decoration: none;
+
+  }
   img {
     position: absolute;
     border-radius: 50%;
     width: 40px;
     height: auto;
-    top: -30px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    top: -40px;
+    background: white;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.26);
   }
   h3 {
     margin-bottom: 0px;
@@ -116,16 +126,29 @@ const GridSelector = styled.div`
   }
 `;
 
-// const OverlayBackground = styled.div`
-//     width: 100%;
-//     height: 100%;
-//     position: fixed;
-//     top: 0;
-//     overflow: hidden;
-//     z-index: 3;
-//     left: 0;
-//     background: #424242;
-// }`;
+const SeeMoreButton = styled.div`
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 0;
+    background: #7556d1;
+    color: white;
+    cursor: pointer;
+    border: none;
+    padding: 5px 10px;
+    font-size: 15px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #3a4080;
+      transition: all 0.2s ease;
+    }
+
+    a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    `
 
 class IndexPage extends Component {
   constructor(props) {
@@ -140,6 +163,8 @@ class IndexPage extends Component {
     this.handleInputSearch = this.handleInputSearch.bind(this);
     this.handleMaximized = this.handleMaximized.bind(this);
     this.handleColumns = this.handleColumns.bind(this);
+
+
     // creating ref
     this.learnRef = [];
   }
@@ -162,11 +187,6 @@ class IndexPage extends Component {
 
     return (
       <Layout>
-        {/* {this.state.isMaximized && (
-          <OverlayBackground
-            onClick={() => this.setState({ isMaximized: false })}
-          />
-        )} */}
         <GridSelector>
           <FontAwesomeIcon icon={faThLarge} size="lg" />
           <select
@@ -199,12 +219,14 @@ class IndexPage extends Component {
                   isMaximized={this.state.isMaximized}
                 >
                   <CardHeader>
-                    <img src={`https:${node.icon.file.url}`} alt={node.title} />
-                    <h3>{node.title}</h3>
+                    <Link to={node.slug}>
+                      <img src={`https:${node.icon.file.url}`} alt={node.title} />
+                      <h3>{node.title}</h3>
+                    </Link>
                   </CardHeader>
                   <ListLearnings>
                     {node && node.learning ? (
-                      node.learning
+                      node.learning.slice(0, 6)
                         .sort(
                           (a, b) =>
                             new Date(b.updatedAt) - new Date(a.updatedAt)
@@ -227,6 +249,7 @@ class IndexPage extends Component {
                     ) : (
                         <p>Nothing here yet...</p>
                       )}
+                    {node && node.learning && node.learning.length > 6 && <SeeMoreButton><Link to={node.slug}>Visit Page</Link></SeeMoreButton>}
                   </ListLearnings>
                 </LearningCard>
               );
@@ -249,6 +272,7 @@ export const pageQuery = graphql`
       edges {
         node {
           title
+          slug
           learning {
             title
             link

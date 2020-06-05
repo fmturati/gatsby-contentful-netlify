@@ -30,7 +30,6 @@ const Footer = styled.section`
 
 const Layout = ({ children }) => {
 
-
   return (
     <>
       <Header />
