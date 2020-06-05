@@ -73,8 +73,6 @@ exports.createPages = ({ graphql, actions }) => {
     const learnings = result.data.allContentfulLearning.edges;
     const pages = result.data.allContentfulPages.edges;
     const categories = result.data.allContentfulCategory.edges;
-    console.log("exports.createPages -> categories", categories)
-    // console.log("exports.createPages -> learnings", learnings)
 
     learnings.forEach((learning, index) => {
       const previous =
@@ -93,7 +91,6 @@ exports.createPages = ({ graphql, actions }) => {
     });
 
     categories.forEach((category, index) => {
-      console.log("exports.createPages -> category", category)
       const previous = index === categories.length - 1 ? null : categories[index + 1].node;
       const next = index === 0 ? null : categories[index - 1].node;
 

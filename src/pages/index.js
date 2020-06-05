@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { Link, graphql } from 'gatsby';
-import PropTypes from 'prop-types';
+import PropTypes, { node } from 'prop-types';
 
 import styled from 'styled-components';
 import Layout from '../components/layout';
 import SEO from '../components/seo';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faAngleRight, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faAngleRight, faAngleUp, faPlus, faAngleDown, faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
 const GridCards = styled.div`
   display: grid;
@@ -150,6 +150,66 @@ const SeeMoreButton = styled.div`
     }
     `
 
+const AccordionItem = styled.div`
+    background: #6359de;
+    height: 70px;
+    height: ${(props) => props.id === props.isActive && props.isAccordion ? `${props.rows * 35 + 35}px` : '35px'};
+    transition: height 0.4s ease;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+    div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+       
+      p {
+      margin: 0;
+      padding: 5px 20px;
+      font-size: 19px;
+      color: white;
+      }
+
+      svg {
+        margin-right: 20px;
+        path {
+          color: #ffffff;
+        }
+      }
+    }
+    
+    `
+
+
+const AccordionSubItem = styled.div`
+background: white; 
+height: auto;
+
+  a {
+    font-size: 16px;
+    color: #444444;
+    text-decoration: none;
+    width: 100%;
+    padding: 5px 20px;
+
+  }
+  .icon {
+    margin-right: 10px;
+    path {
+      color: grey;
+    }    
+  }
+  `
+
+const AccordionSection = styled.section`
+  margin-top: 60px;
+  h4 {
+    font-size: 30px;
+      text-align: center;
+  }
+ `
+
+
 class IndexPage extends Component {
   constructor(props) {
     super(props);
@@ -158,11 +218,14 @@ class IndexPage extends Component {
       isMaximized: false,
       maxId: null,
       gridCols: '2',
+      isAccordion: true,
+      isActive: 1
     };
 
     this.handleInputSearch = this.handleInputSearch.bind(this);
     this.handleMaximized = this.handleMaximized.bind(this);
     this.handleColumns = this.handleColumns.bind(this);
+    this.handleAccordion = this.handleAccordion.bind(this)
 
 
     // creating ref
@@ -179,6 +242,15 @@ class IndexPage extends Component {
 
   handleColumns = (e) => {
     this.setState({ gridCols: e.target.value });
+  };
+
+  handleAccordion = (index) => {
+    // console.log("IndexPage -> handleAccordion -> index", index)
+    if (index !== this.state.isActive) {
+      this.setState({ isAccordion: true, isActive: index })
+    } else {
+      this.setState({ isAccordion: !this.state.isAccordion })
+    }
   };
 
   render() {
@@ -207,7 +279,7 @@ class IndexPage extends Component {
 
         <GridCards gridCols={this.state.gridCols}>
           {categories
-            .sort(() => Math.random() - 0.5)
+            // .sort(() => Math.random() - 0.5)
             .map(({ node }, index) => {
               return (
                 <LearningCard
@@ -255,6 +327,30 @@ class IndexPage extends Component {
               );
             })}
         </GridCards>
+        <AccordionSection>
+          <h4>Helpful Links</h4>
+          {categories && categories.map(({ node }, index) => {
+            if (node.links === null) {
+              return;
+            }
+            return (
+              <AccordionItem id={index} isActive={this.state.isActive} isAccordion={this.state.isAccordion} rows={node.links.length} onClick={() => this.handleAccordion(index)}>
+                {node.links &&
+                  <>
+                    <div>
+                      <p>{node.title}</p>
+                      <FontAwesomeIcon icon={index === this.state.isActive && this.state.isAccordion ? faAngleUp : faAngleDown} />
+                    </div>
+                    {node.links && node.links.map(item => {
+                      return (
+                        <AccordionSubItem><a href={item.link} target="_blank"><FontAwesomeIcon icon={faExternalLinkAlt} className="icon" />{item.title}</a></AccordionSubItem>
+                      )
+                    })}
+                  </>}
+              </AccordionItem>
+            )
+          })}
+        </AccordionSection>
       </Layout>
     );
   }
@@ -273,6 +369,10 @@ export const pageQuery = graphql`
         node {
           title
           slug
+          links {
+            link
+            title
+          }
           learning {
             title
             link

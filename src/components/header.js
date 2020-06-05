@@ -202,8 +202,8 @@ class Header extends Component {
         render={(data) => {
           const learnings = data.allContentfulLearning.edges;
           const categories = data.allContentfulCategory.edges;
-          console.log("Header -> render -> categories", categories)
-          console.log("Header -> render -> learnings", learnings)
+          // console.log("Header -> render -> categories", categories)
+          // console.log("Header -> render -> learnings", learnings)
 
           return (
             <TopHeader>
@@ -230,7 +230,7 @@ class Header extends Component {
                   </li>
                   <li
                     onClick={() => {
-                      console.log('clicked');
+                      // console.log('clicked');
                       this.setState({ dropDownMenu: !this.state.dropDownMenu });
                     }}>
                     Categories <FontAwesomeIcon icon={faAngleDown} />

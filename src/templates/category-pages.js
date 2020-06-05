@@ -50,7 +50,6 @@ class CategoryPage extends Component {
 
 
     render() {
-        // console.log(this.props)
 
         const { title, learning, updatedAt, icon } = this.props.data.contentfulCategory;
         return (
