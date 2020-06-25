@@ -38,6 +38,7 @@ module.exports = {
       options: {
         spaceId: `62i5gr3zc6ha`,
         accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+        host: process.env.CONTENTFUL_HOST || 'cdn.contentful.com'
       },
     },
     `@contentful/gatsby-transformer-contentful-richtext`,
