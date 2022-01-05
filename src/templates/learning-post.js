@@ -38,7 +38,6 @@ const LearnRelated = styled.ul`
 
 const car = 0;
 
-
 class LearningPost extends Component {
   render() {
     const { data } = this.props;
@@ -55,7 +54,8 @@ class LearningPost extends Component {
       <Layout siteTitle={data.site.siteMetadata.title}>
         <MetaSection>
           <p>
-            Published on {date} | Category: {category.title}
+            Published on {date} | Category:{' '}
+            {category.title ? category.title : 'Não Definido'}
           </p>
         </MetaSection>
         <h2>{title}</h2>
