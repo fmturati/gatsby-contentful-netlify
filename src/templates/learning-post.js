@@ -55,7 +55,7 @@ class LearningPost extends Component {
         <MetaSection>
           <p>
             Published on {date} | Category:{' '}
-            {category.title ? category.title : 'Não Definido'}
+            {category && category.title ? category.title : 'Não Definido'}
           </p>
         </MetaSection>
         <h2>{title}</h2>
